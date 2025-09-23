@@ -4,25 +4,25 @@
     "image": "personagem/personagem_01.png",
     "lines": [
       {
-        "text": "Ei, eu sou o 1. Como você está?",
+        "text": "Olá, meu nome é null, e seu qual é?",
         "choices": [
           {
-            "text": "Estou bem.",
-            "next": "ok",
+            "text": "sem info",
+            "next": "sem info",
             "effect": {
               "score": 1
             }
           },
           {
-            "text": "Não muito.",
-            "next": "sad",
+            "text": "sem info",
+            "next": "sem info",
             "effect": {
               "score": 0
             }
           },
           {
-            "text": "Não é da sua conta.",
-            "next": "rude",
+            "text": "sem info",
+            "next": "sem info",
             "effect": {
               "score": -1
             }
@@ -30,17 +30,17 @@
         ]
       },
       {
-        "text": "1 pergunta: Você quer conversar sobre bullying?",
+        "text": "sem info",
         "choices": [
           {
-            "text": "Sim, posso ajudar.",
-            "next": "help",
+            "text": "sem info",
+            "next": "sem info",
             "effect": {
               "score": 2
             }
           },
           {
-            "text": "Não agora.",
+            "text": sem info",
             "next": "later",
             "effect": {
               "score": 0

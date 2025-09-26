@@ -15,3 +15,9 @@ body{margin:0;background:#111;color:#eee;display:flex;align-items:center;justify
 #nextScenario{padding:8px 12px;border-radius:6px;background:#285;cursor:pointer}
 .overlay{position:absolute;inset:0;background:rgba(3,7,18,0.9);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10}
 .overlay input{padding:8px;margin:8px;border-radius:6px;width:220px}
+
+
+/* TTS controls and history */
+.ttsControls { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:8px; }
+.dialogHistory { max-height:140px; overflow:auto; border:1px solid rgba(0,0,0,0.1); padding:6px; background:rgba(255,255,255,0.9); margin-bottom:8px; }
+.histItem { font-size:13px; margin:2px 0; }

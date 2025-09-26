@@ -53,30 +53,53 @@ function openDialogFor(cid){
   showLine(char, line);
 }
 
+
 function showLine(char, line){
-  document.getElementById('dialogText').textContent = `${char.name}: ${line.text}`;
+  if(!line){
+    // fallback: personagem sem fala
+    const fb = `${char.name}: ...`;
+    document.getElementById('dialogText').textContent = fb;
+    addToHistory(char.name, '...');
+    if(window.tts && window.tts.enabled) speak(fb);
+    return;
+  }
+
+  const fullText = `${char.name}: ${line.text}`;
+  document.getElementById('dialogText').textContent = fullText;
+  addToHistory(char.name, line.text);
+  // speak line if enabled
+  if(window.tts && window.tts.enabled) speak(fullText);
+
   const choicesDiv = document.getElementById('choices');
   choicesDiv.innerHTML = '';
-  line.choices.forEach((ch, idx) => {
+  (line.choices || []).forEach((ch, idx) => {
     const b = document.createElement('button');
     b.className='choiceBtn';
     b.textContent = ch.text;
     b.addEventListener('click', ()=>{
       // apply effects
       if(ch.effect && ch.effect.score) playerState.score += ch.effect.score;
-      // feedback
-      document.getElementById('dialogText').textContent = `${playerName}: ${ch.text} (pontuação: ${playerState.score})`;
+      // feedback: show player's chosen response
+      const playerMsg = `${playerName}: ${ch.text} (pontuação: ${playerState.score})`;
+      document.getElementById('dialogText').textContent = playerMsg;
+      addToHistory(playerName, ch.text);
       choicesDiv.innerHTML = '';
-      // allow progression: mark line as answered by removing it or advancing
-      // remove answered line from character
-      char.lines.shift();
-      // if character has more lines, keep them for next interaction; else show "seguir" to proceed
+      // remove the current line from character lines (mark as answered)
+      // but keep original lines for debugging by storing answered flag instead of shift
+      if(!char._answered) char._answered = [];
+      char._answered.push(line.id || line.text);
+      // remove answered first occurrence from lines array
+      if(char.lines && char.lines.length){
+        const idxLine = char.lines.indexOf(line);
+        if(idxLine !== -1) char.lines.splice(idxLine,1);
+      }
+
+      // if character has more lines, offer continue; else proceed button
       if(char.lines.length === 0){
         const cont = document.createElement('button');
         cont.textContent = 'Prosseguir';
         cont.className='choiceBtn';
         cont.addEventListener('click', ()=>{
-          // when all characters in current scenario have no lines, allow next scenario
           maybeAdvanceScenario();
         });
         choicesDiv.appendChild(cont);
@@ -90,7 +113,11 @@ function showLine(char, line){
     });
     choicesDiv.appendChild(b);
   });
+
+  // render history view (keeps recent messages visible)
+  renderHistory();
 }
+
 
 function maybeAdvanceScenario(){
   // check if all characters in this scenario have empty lines
@@ -121,6 +148,97 @@ document.getElementById('nextScenario').addEventListener('click', ()=>{
 });
 
 // load JSON data
+
+// ---- TTS & diálogo histórico helpers ----
+window.tts = {enabled: true, voiceURI: null, rate: 1, pitch: 1, volume: 1};
+window.dialogHistory = []; // {who, text, time}
+
+function addToHistory(who, text){
+  window.dialogHistory.push({who, text, time: new Date().toISOString()});
+  // keep history to last 100 entries
+  if(window.dialogHistory.length > 100) window.dialogHistory.shift();
+}
+
+function renderHistory(){
+  const h = document.getElementById('dialogHistory');
+  if(!h) return;
+  h.innerHTML = '';
+  // show last 8 messages reversed
+  const slice = window.dialogHistory.slice(-8);
+  slice.forEach(it => {
+    const d = document.createElement('div');
+    d.className = 'histItem';
+    d.textContent = `${it.who}: ${it.text}`;
+    h.appendChild(d);
+  });
+  h.scrollTop = h.scrollHeight;
+}
+
+function speak(text){
+  if(!('speechSynthesis' in window)) return;
+  const utter = new SpeechSynthesisUtterance(text);
+  // find voice by URI if set
+  const voices = window.speechSynthesis.getVoices() || [];
+  if(window.tts.voiceURI){
+    const v = voices.find(x=>x.voiceURI===window.tts.voiceURI || x.name===window.tts.voiceURI);
+    if(v) utter.voice = v;
+  }
+  utter.rate = window.tts.rate || 1;
+  utter.pitch = window.tts.pitch || 1;
+  utter.volume = window.tts.volume || 1;
+  window.speechSynthesis.cancel(); // stop previous
+  window.speechSynthesis.speak(utter);
+}
+
+// populate voice selector if present
+function populateVoices(){
+  const sel = document.getElementById('voiceSelect');
+  if(!sel || !('speechSynthesis' in window)) return;
+  const voices = window.speechSynthesis.getVoices();
+  sel.innerHTML = '';
+  voices.forEach(v=>{
+    const o = document.createElement('option');
+    o.value = v.voiceURI || v.name;
+    o.textContent = `${v.name} ${v.lang ? '('+v.lang+')' : ''}`;
+    sel.appendChild(o);
+  });
+  // select previously chosen if exists
+  if(window.tts.voiceURI){
+    sel.value = window.tts.voiceURI;
+  }
+}
+
+if('speechSynthesis' in window){
+  window.speechSynthesis.onvoiceschanged = populateVoices;
+  // try immediate populate
+  setTimeout(populateVoices, 200);
+}
+
+// setup controls listeners (if elements exist)
+function setupTTSControls(){
+  const toggle = document.getElementById('ttsToggle');
+  const rate = document.getElementById('ttsRate');
+  const pitch = document.getElementById('ttsPitch');
+  const volume = document.getElementById('ttsVolume');
+  const sel = document.getElementById('voiceSelect');
+  if(toggle) toggle.addEventListener('click', ()=> {
+    window.tts.enabled = !window.tts.enabled;
+    toggle.textContent = window.tts.enabled ? 'TTS: ON' : 'TTS: OFF';
+  });
+  if(rate) rate.addEventListener('change', ()=> window.tts.rate = parseFloat(rate.value));
+  if(pitch) pitch.addEventListener('change', ()=> window.tts.pitch = parseFloat(pitch.value));
+  if(volume) volume.addEventListener('change', ()=> window.tts.volume = parseFloat(volume.value));
+  if(sel) sel.addEventListener('change', ()=> window.tts.voiceURI = sel.value);
+}
+
+// call setup after DOM loaded
+document.addEventListener('DOMContentLoaded', ()=>{
+  setupTTSControls();
+  renderHistory();
+});
+// ---- end helpers ----
+
+
 Promise.all([loadJSON('personagens.json'), loadJSON('cenarios_map.json')]).then(([p,c])=>{
   characters = p;
   scenariosMap = c;

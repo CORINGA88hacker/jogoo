@@ -102,28 +102,28 @@
     ]
   },
   "personagem_03": {
-    "name": "Char 3",
+    "name": "null",
     "image": "personagem/personagem_03.png",
     "lines": [
       {
-        "text": "Ei, eu sou o 3. Como você está?",
+        "text": "Ei, você viu aquele preto que está estudando aqui?",
         "choices": [
           {
-            "text": "Estou bem.",
+            "text": "Sim eu vi.",
             "next": "ok",
             "effect": {
               "score": 1
             }
           },
           {
-            "text": "Não muito.",
+            "text": "Não eu chegei a ver ele.",
             "next": "sad",
             "effect": {
               "score": 0
             }
           },
           {
-            "text": "Não é da sua conta.",
+            "text": "Serio.",
             "next": "rude",
             "effect": {
               "score": -1

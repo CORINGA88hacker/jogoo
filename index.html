@@ -45,7 +45,25 @@
       <div class="small" style="margin-top:6px;">Seu nome e foto ficam no seu navegador e (opcional) a foto é enviada ao Firebase Storage.</div>
     </div>
 
-    <div class="chatBox" id="chatBox"></div>
+    
+<!-- Admin Panel (hidden unless user is admin) -->
+<div id="adminPanel" style="display:none; margin-top:12px; padding:8px; border-top:1px solid rgba(255,255,255,0.03);">
+  <h3 style="margin:0 0 8px 0;">Painel Admin</h3>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;">
+    <input id="banUidInput" placeholder="UID para banir/desbanir" style="flex:1; min-width:180px" />
+    <button id="banBtn">Banir</button>
+    <button id="unbanBtn">Desbanir</button>
+  </div>
+  <div style="margin-top:8px;display:flex;gap:6px;align-items:center;">
+    <input id="searchInsta" placeholder="Buscar por @instagram" style="flex:1; min-width:140px" />
+    <button id="searchInstaBtn">Buscar</button>
+    <button id="markVerifiedBtn">Marcar verificado</button>
+    <button id="markAdminBtn">Marcar admin</button>
+  </div>
+  <div style="margin-top:8px;"><strong>Logs de ação</strong><div id="adminLogs" style="max-height:160px; overflow:auto; margin-top:6px; background:#071; color:#fff; padding:6px; display:none;"></div></div>
+</div>
+<!-- End Admin Panel -->
+<div class="chatBox" id="chatBox"></div>
 
     <div style="margin-top:8px;">
       <textarea id="messageInput" rows="2" placeholder="Escreva sua mensagem..."></textarea>
@@ -251,6 +269,179 @@ clearBtn.addEventListener('click', ()=>{ chatBox.innerHTML=''; localStorage.remo
     gameArea.innerHTML = '<p>Não foi possível carregar o jogo na iframe: '+e.message+'</p>';
   }
 })();
+
+/* --- Additional features injected: media upload, fingerprint, admin handlers, improved message loading --- */
+// Media input for audio/photo/video
+(function addMediaInput(){
+  try {
+    const mb = document.createElement('div');
+    mb.style.marginTop='8px';
+    mb.innerHTML = '<input type="file" id="mediaInput" accept="image/*,video/*,audio/*" style="width:100%;">';
+    // insert before message input area
+    const messageArea = document.querySelector('textarea#messageInput') || document.querySelector('textarea');
+    if(messageArea && messageArea.parentNode){ messageArea.parentNode.insertBefore(mb, messageArea); }
+    window.mediaInput = document.getElementById('mediaInput');
+    mediaInput.addEventListener('change', async (ev)=>{
+      const f = ev.target.files[0];
+      if(!f) return alert('Nenhum arquivo selecionado.');
+      const t = f.type || '';
+      const type = t.startsWith('image/') ? 'image' : t.startsWith('video/') ? 'video' : 'audio';
+      try {
+        if(window.firebase && firebase.storage){
+          const ref = firebase.storage().ref().child('chat_media/'+Date.now()+'_'+f.name);
+          const uploadTask = ref.put(f);
+          uploadTask.on('state_changed', ()=>{}, err=>{ alert('Upload falhou: '+err.message); }, async ()=>{
+            const url = await uploadTask.snapshot.ref.getDownloadURL();
+            const payload = { text:'', ts: Date.now(), type: type, url: url, name: profile.name||'Convidado', photo: profile.photoURL||'', uid: (firebase.auth && firebase.auth().currentUser)?firebase.auth().currentUser.uid:null };
+            if(chatRef){ chatRef.push(payload); } else { fallbackLocalSend(payload); }
+          });
+        } else {
+          // fallback: read as data URL and send
+          const reader = new FileReader();
+          reader.onload = ()=>{
+            const url = reader.result;
+            const payload = { text:'', ts: Date.now(), type: type, url: url, name: profile.name||'Convidado', photo: profile.photoURL||'', uid: null };
+            fallbackLocalSend(payload);
+          };
+          reader.readAsDataURL(f);
+        }
+      } catch(e){ console.error(e); alert('Erro upload: '+e.message); }
+    });
+  } catch(e){ console.error('mediaInput init failed', e); }
+})();
+
+// Fingerprint and device_id
+(function setupFingerprint(){
+  try {
+    function makeFingerprint(){
+      const u = navigator.userAgent || 'na';
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'no-tz';
+      const scr = `${screen.width}x${screen.height}@${screen.pixelDepth||screen.colorDepth||0}`;
+      let seed = localStorage.getItem('device_id');
+      if(!seed){ seed = Date.now().toString(36)+Math.random().toString(36).slice(2); localStorage.setItem('device_id', seed); }
+      const raw = u + '|' + tz + '|' + scr + '|' + seed;
+      return btoa(unescape(encodeURIComponent(raw))).slice(0,50);
+    }
+    window.deviceFingerprint = makeFingerprint();
+    // expose function
+    window.makeFingerprint = makeFingerprint;
+    // show in console
+    console.log('deviceFingerprint', window.deviceFingerprint);
+  } catch(e){ console.error('fingerprint failed', e); }
+})();
+
+// Improved message loading: fetch last messages on connect to ensure we get existing ones
+(function setupFirebaseMessageLoading(){
+  try {
+    if(firebaseAvailable && chatRef){
+      // initial load of last 200 messages once
+      chatRef.limitToLast(200).once('value').then(snapshot=>{
+        chatBox.innerHTML=''; // clear then render
+        snapshot.forEach(snap=>{ renderMessage(snap.val()); });
+      }).catch(e=>{ console.warn('initial load failed', e); });
+      // keep listening for new ones
+      chatRef.limitToLast(200).on('child_added', snap=>{ renderMessage(snap.val()); });
+    } else {
+      // already handled by BroadcastChannel/localStorage elsewhere
+    }
+  } catch(e){ console.error('setupFirebaseMessageLoading failed', e); }
+})();
+
+// Admin handlers (show panel if current user is admin)
+(function setupAdmin(){
+  try {
+    const adminPanel = document.getElementById('adminPanel');
+    const banBtn = document.getElementById('banBtn');
+    const unbanBtn = document.getElementById('unbanBtn');
+    const banUidInput = document.getElementById('banUidInput');
+    const searchInstaBtn = document.getElementById('searchInstaBtn');
+    const searchInsta = document.getElementById('searchInsta');
+    const markVerifiedBtn = document.getElementById('markVerifiedBtn');
+    const markAdminBtn = document.getElementById('markAdminBtn');
+    const adminLogs = document.getElementById('adminLogs');
+
+    async function checkAndShowAdmin(){
+      try {
+        if(window.firebase && firebase.auth && firebase.auth().currentUser){
+          const uid = firebase.auth().currentUser.uid;
+          const snap = await firebase.database().ref('users/'+uid+'/roles').once('value');
+          const roles = snap.val() || {};
+          if(roles.admin){
+            adminPanel.style.display='block';
+            adminLogs.style.display='block';
+          }
+        } else {
+          // For development: if localStorage has is_admin flag, show admin panel
+          if(localStorage.getItem('is_admin')==='1'){ adminPanel.style.display='block'; adminLogs.style.display='block'; }
+        }
+      } catch(e){ console.error('checkAndShowAdmin', e); }
+    }
+
+    banBtn.addEventListener('click', async ()=>{
+      const uid = banUidInput.value.trim();
+      if(!uid) return alert('UID?');
+      try { await firebase.database().ref('users/'+uid).update({ banned: true }); await firebase.database().ref('bans/'+uid).set({ ts: Date.now(), by: (firebase.auth().currentUser?firebase.auth().currentUser.uid:null) }); adminLogs.innerHTML += 'Banido '+uid+'<br>'; alert('Usuário banido.'); } catch(e){ alert('Erro: '+e.message); }
+    });
+    unbanBtn.addEventListener('click', async ()=>{
+      const uid = banUidInput.value.trim();
+      if(!uid) return alert('UID?');
+      try { await firebase.database().ref('users/'+uid).update({ banned: false }); await firebase.database().ref('bans/'+uid).remove(); adminLogs.innerHTML += 'Desbanido '+uid+'<br>'; alert('Usuário desbanido.'); } catch(e){ alert('Erro: '+e.message); }
+    });
+    searchInstaBtn.addEventListener('click', async ()=>{
+      const handle = searchInsta.value.trim();
+      if(!handle) return alert('Handle?');
+      try {
+        const ref = firebase.database().ref('users');
+        const snap = await ref.orderByChild('instagram').equalTo(handle).once('value');
+        if(!snap.exists()) return alert('Nenhum usuário encontrado com esse Instagram.');
+        const found = snap.val();
+        const keys = Object.keys(found||{});
+        banUidInput.value = keys[0];
+        adminLogs.innerHTML += 'Busca @'+handle+' -> '+keys.join(',')+'<br>';
+        alert('Usuário localizado: '+keys.join(','));
+      } catch(e){ alert('Erro: '+e.message); }
+    });
+    markVerifiedBtn.addEventListener('click', async ()=>{
+      const uid = banUidInput.value.trim();
+      if(!uid) return alert('UID?');
+      await firebase.database().ref('users/'+uid+'/roles').update({ verified: true });
+      adminLogs.innerHTML += 'Marked verified '+uid+'<br>';
+      alert('Marcado verificado.');
+    });
+    markAdminBtn.addEventListener('click', async ()=>{
+      const uid = banUidInput.value.trim();
+      if(!uid) return alert('UID?');
+      await firebase.database().ref('users/'+uid+'/roles').update({ admin: true });
+      adminLogs.innerHTML += 'Marked admin '+uid+'<br>';
+      alert('Marcado admin.');
+    });
+
+    // expose check function
+    window.checkAndShowAdmin = checkAndShowAdmin;
+    // run after a short delay (auth may not be ready immediately)
+    setTimeout(checkAndShowAdmin, 1200);
+    if(window.firebase && firebase.auth){
+      firebase.auth().onAuthStateChanged(()=>{ setTimeout(checkAndShowAdmin, 500); });
+    }
+  } catch(e){ console.error('setupAdmin failed', e); }
+})();
+
+// Save access logs on load
+(function saveAccessLog(){
+  try {
+    const uid = (window.firebase && firebase.auth && firebase.auth().currentUser) ? firebase.auth().currentUser.uid : 'guest_'+(localStorage.getItem('device_id')||'local');
+    const logRef = (window.firebase && firebase.database) ? firebase.database().ref('access_logs/'+uid) : null;
+    const item = { ts: Date.now(), ua: navigator.userAgent, tz: Intl.DateTimeFormat().resolvedOptions().timeZone, deviceFinger: window.deviceFingerprint };
+    if(logRef){ logRef.push(item); }
+    // also persist locally
+    const arr = JSON.parse(localStorage.getItem('local_access_logs')||'[]');
+    arr.push(item);
+    if(arr.length>200) arr.shift();
+    localStorage.setItem('local_access_logs', JSON.stringify(arr));
+  } catch(e){ console.error('saveAccessLog', e); }
+})();
+
+/* end additions */
 </script>
 </body>
 </html>

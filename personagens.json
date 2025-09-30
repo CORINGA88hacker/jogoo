@@ -51,11 +51,11 @@
     ]
   },
   "personagem_02": {
-    "name": "Char 2",
+    "name": "Ana",
     "image": "personagem/personagem_02.png",
     "lines": [
       {
-        "text": "Ei, eu sou o 2. Como você está?",
+        "text": "Eai, Como você está?",
         "choices": [
           {
             "text": "Estou bem.",
@@ -72,7 +72,7 @@
             }
           },
           {
-            "text": "Não é da sua conta.",
+            "text": "null.",
             "next": "rude",
             "effect": {
               "score": -1

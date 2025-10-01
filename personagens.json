@@ -153,28 +153,28 @@
     ]
   },
   "personagem_04": {
-    "name": "Char 4",
+    "name": "bruna",
     "image": "personagem/personagem_04.png",
     "lines": [
       {
-        "text": "Ei, eu sou o 4. Como você está?",
+        "text": "Ficou sabendo que a quele preto vai estudar na nossa sala?",
         "choices": [
           {
-            "text": "Estou bem.",
+            "text": "Não.",
             "next": "ok",
             "effect": {
               "score": 1
             }
           },
           {
-            "text": "Não muito.",
+            "text": "Aff.",
             "next": "sad",
             "effect": {
               "score": 0
             }
           },
           {
-            "text": "Não é da sua conta.",
+            "text": "null.",
             "next": "rude",
             "effect": {
               "score": -1
@@ -183,17 +183,17 @@
         ]
       },
       {
-        "text": "4 pergunta: Você quer conversar sobre bullying?",
+        "text": "ele bem que poderia ter ido pra outra escola",
         "choices": [
           {
-            "text": "Sim, posso ajudar.",
+            "text": "Sim, concordo.",
             "next": "help",
             "effect": {
               "score": 2
             }
           },
           {
-            "text": "Não agora.",
+            "text": "null.",
             "next": "later",
             "effect": {
               "score": 0

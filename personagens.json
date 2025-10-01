@@ -259,24 +259,24 @@
     "image": "personagem/personagem_06.png",
     "lines": [
       {
-        "text": "Ei, eu sou o 6. Como você está?",
+        "text": "Ficou sabendo que a quele preto vai estudar na nossa sala?",
         "choices": [
           {
-            "text": "Estou bem.",
+            "text": "Não.",
             "next": "ok",
             "effect": {
               "score": 1
             }
           },
           {
-            "text": "Não muito.",
+            "text": "Vix",
             "next": "sad",
             "effect": {
               "score": 0
             }
           },
           {
-            "text": "Não é da sua conta.",
+            "text": "null.",
             "next": "rude",
             "effect": {
               "score": -1
@@ -285,17 +285,17 @@
         ]
       },
       {
-        "text": "6 pergunta: Você quer conversar sobre bullying?",
+        "text": "nill",
         "choices": [
           {
-            "text": "Sim, posso ajudar.",
+            "text": "null",
             "next": "help",
             "effect": {
               "score": 2
             }
           },
           {
-            "text": "Não agora.",
+            "text": "null.",
             "next": "later",
             "effect": {
               "score": 0

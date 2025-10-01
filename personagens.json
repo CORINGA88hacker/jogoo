@@ -208,7 +208,7 @@
     "image": "personagem/personagem_05.png",
     "lines": [
       {
-        "text": "Ei, eu sou o 5. Como você está?",
+        "text": "Sai da qui seu macaco",
         "choices": [
           {
             "text": "Estou bem.",
@@ -234,17 +234,17 @@
         ]
       },
       {
-        "text": "5 pergunta: Você quer conversar sobre bullying?",
+        "text": "Anda logo sai da qui seu macaco",
         "choices": [
           {
-            "text": "Sim, posso ajudar.",
+            "text": "ok.",
             "next": "help",
             "effect": {
               "score": 2
             }
           },
           {
-            "text": "Não agora.",
+            "text": "...",
             "next": "later",
             "effect": {
               "score": 0

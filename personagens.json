@@ -310,24 +310,24 @@
     "image": "personagem/personagem_07.png",
     "lines": [
       {
-        "text": "Ei, eu sou o 7. Como você está?",
+        "text": "ele bem que poderia ter ido pra outra escola",
         "choices": [
           {
-            "text": "Estou bem.",
+            "text": " ",
             "next": "ok",
             "effect": {
               "score": 1
             }
           },
           {
-            "text": "Não muito.",
+            "text": " ",
             "next": "sad",
             "effect": {
               "score": 0
             }
           },
           {
-            "text": "Não é da sua conta.",
+            "text": " ",
             "next": "rude",
             "effect": {
               "score": -1
@@ -336,17 +336,17 @@
         ]
       },
       {
-        "text": "7 pergunta: Você quer conversar sobre bullying?",
+        "text": " ",
         "choices": [
           {
-            "text": "Sim, posso ajudar.",
+            "text": " ",
             "next": "help",
             "effect": {
               "score": 2
             }
           },
           {
-            "text": "Não agora.",
+            "text": " ",
             "next": "later",
             "effect": {
               "score": 0
@@ -357,28 +357,28 @@
     ]
   },
   "personagem_08": {
-    "name": "Char 8",
+    "name": "001",
     "image": "personagem/personagem_08.png",
     "lines": [
       {
-        "text": "Ei, eu sou o 8. Como você está?",
+        "text": "O mana, a quele urubu estuda na sua sala",
         "choices": [
           {
-            "text": "Estou bem.",
+            "text": "infelismente",
             "next": "ok",
             "effect": {
               "score": 1
             }
           },
           {
-            "text": "Não muito.",
+            "text": "Sim",
             "next": "sad",
             "effect": {
               "score": 0
             }
           },
           {
-            "text": "Não é da sua conta.",
+            "text": " ",
             "next": "rude",
             "effect": {
               "score": -1
@@ -387,17 +387,17 @@
         ]
       },
       {
-        "text": "8 pergunta: Você quer conversar sobre bullying?",
+        "text": " ",
         "choices": [
           {
-            "text": "Sim, posso ajudar.",
+            "text": " ",
             "next": "help",
             "effect": {
               "score": 2
             }
           },
           {
-            "text": "Não agora.",
+            "text": " ",
             "next": "later",
             "effect": {
               "score": 0
@@ -412,24 +412,24 @@
     "image": "personagem/personagem_09.png",
     "lines": [
       {
-        "text": "Ei, eu sou o 9. Como você está?",
+        "text": "men para aquele buraco negro desaparece da escola",
         "choices": [
           {
-            "text": "Estou bem.",
+            "text": "Poise",
             "next": "ok",
             "effect": {
               "score": 1
             }
           },
           {
-            "text": "Não muito.",
+            "text": " ",
             "next": "sad",
             "effect": {
               "score": 0
             }
           },
           {
-            "text": "Não é da sua conta.",
+            "text": " ",
             "next": "rude",
             "effect": {
               "score": -1
@@ -438,17 +438,17 @@
         ]
       },
       {
-        "text": "9 pergunta: Você quer conversar sobre bullying?",
+        "text": " ",
         "choices": [
           {
-            "text": "Sim, posso ajudar.",
+            "text": " ",
             "next": "help",
             "effect": {
               "score": 2
             }
           },
           {
-            "text": "Não agora.",
+            "text": " ",
             "next": "later",
             "effect": {
               "score": 0

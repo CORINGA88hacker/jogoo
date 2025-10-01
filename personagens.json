@@ -211,21 +211,21 @@
         "text": "Sai da qui seu macaco",
         "choices": [
           {
-            "text": "Estou bem.",
+            "text": "Ok, ja estou saindo.",
             "next": "ok",
             "effect": {
               "score": 1
             }
           },
           {
-            "text": "Não muito.",
+            "text": "null.",
             "next": "sad",
             "effect": {
               "score": 0
             }
           },
           {
-            "text": "Não é da sua conta.",
+            "text": "null.",
             "next": "rude",
             "effect": {
               "score": -1

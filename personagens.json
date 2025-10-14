@@ -514,7 +514,7 @@
     "image": "personagem/personagem_11.png",
     "lines": [
       {
-        "text": "Ss, Você sabe porque fundo do mar e escuro?",
+        "text": "Você sabe por que o fundo do mar é escuro?",
         "choices": [
           {
             "text": "Não porque",
@@ -540,7 +540,7 @@
         ]
       },
       {
-        "text": "Porque os negros não sabia nadarkkkkk",
+        "text": "Porque os negros não sabiam nadar kkkkk",
         "choices": [
           {
             "text": "kkkkk",

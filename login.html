@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Login — Sombras do Pátio</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="firebase.js"></script>
+</head>
+<body class="theme">
+  <main class="auth">
+    <h2>Entrar / Criar conta</h2>
+    <form id="login-form">
+      <input id="email" type="email" placeholder="Email" required />
+      <input id="password" type="password" placeholder="Senha" required />
+      <div class="row">
+        <button type="submit">Entrar</button>
+        <button id="create-account" type="button">Criar conta</button>
+      </div>
+    </form>
+    <p id="auth-msg"></p>
+  </main>
+
+  <script>
+    // Basic wiring; firebase.js exposes auth functions
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const pw = document.getElementById('password').value;
+      try {
+        await window.AppAuth.signIn(email, pw);
+        location.href = 'index.html';
+      } catch (err) {
+        document.getElementById('auth-msg').textContent = err.message || err;
+      }
+    });
+    document.getElementById('create-account').addEventListener('click', async () => {
+      const email = document.getElementById('email').value;
+      const pw = document.getElementById('password').value;
+      try {
+        await window.AppAuth.createAccount(email, pw);
+        location.href = 'index.html';
+      } catch (err) {
+        document.getElementById('auth-msg').textContent = err.message || err;
+      }
+    });
+  </script>
+</body>
+</html>

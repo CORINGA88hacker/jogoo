@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin — Sombras do Pátio</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="firebase.js"></script>
+</head>
+<body class="theme">
+  <main>
+    <h2>Painel Admin</h2>
+    <div id="admin-tools">
+      <button id="refresh">Atualizar mensagens</button>
+      <div id="messages-list"></div>
+    </div>
+  </main>
+  <script>
+    document.getElementById('refresh').addEventListener('click', async ()=> {
+      const msgs = await window.AppChat.fetchRecent();
+      const container = document.getElementById('messages-list');
+      container.innerHTML = '';
+      msgs.forEach(m => {
+        const el = document.createElement('div');
+        el.className = 'msg';
+        el.innerHTML = `<strong>${m.author}</strong>: ${m.text}
+          <div class="admin-actions">
+            <button data-id="${m.id}" class="btn-ban">Banir</button>
+            <button data-id="${m.id}" class="btn-delete">Apagar</button>
+            <button data-id="${m.id}" class="btn-pin">Fixar</button>
+          </div>`;
+        container.appendChild(el);
+      });
+      container.querySelectorAll('.btn-delete').forEach(b=>{
+        b.onclick = async (ev) => { await window.AppChat.deleteMessage(b.dataset.id); b.parentElement.parentElement.remove(); }
+      });
+    });
+  </script>
+</body>
+</html>

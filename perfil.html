@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Perfil — Sombras do Pátio</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="firebase.js"></script>
+</head>
+<body class="theme">
+  <main class="profile">
+    <h2>Perfil</h2>
+    <div id="profile-info">
+      <img id="profile-photo" alt="Foto de perfil" />
+      <p id="profile-email"></p>
+      <input type="file" id="photo-file" accept="image/*" />
+      <button id="upload-photo">Enviar foto</button>
+    </div>
+    <button id="logout">Sair</button>
+  </main>
+
+  <script>
+    document.getElementById('logout').addEventListener('click', ()=> window.AppAuth.signOut());
+    document.getElementById('upload-photo').addEventListener('click', async () => {
+      const f = document.getElementById('photo-file').files[0];
+      if (!f) return alert('Escolhe uma imagem');
+      try {
+        await window.AppStorage.uploadProfilePhoto(f);
+        alert('Foto enviada');
+      } catch(err){ alert(err.message || err); }
+    });
+    // firebase.js will populate profile info on auth state changes
+  </script>
+</body>
+</html>

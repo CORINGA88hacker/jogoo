@@ -44,3 +44,36 @@ input, button{ font-size:15px; padding:8px; border-radius:8px; border:1px solid 
 body.modal-open {
   overflow: hidden !important;
 }
+
+
+/* === Correção de camadas do cenário e personagens === */
+.game-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+.character, .character-sprite, .player {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5; /* acima do cenário */
+  pointer-events: none;
+}
+
+/* Garante que o container principal mantenha tudo centralizado */
+.game-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  background: #000;
+}

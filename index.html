@@ -68,5 +68,13 @@
   function openGame(){ document.getElementById('gameModal').style.display='flex'; document.getElementById('gameFrame').contentWindow.focus(); }
   function closeGame(){ document.getElementById('gameModal').style.display='none'; }
   </script>
+<script>
+// Bloqueia scroll ao abrir jogo
+const modal = document.querySelector('.modal-content');
+if(modal){
+  modal.addEventListener('show', ()=>document.body.classList.add('modal-open'));
+  modal.addEventListener('hide', ()=>document.body.classList.remove('modal-open'));
+}
+</script>
 </body>
 </html>

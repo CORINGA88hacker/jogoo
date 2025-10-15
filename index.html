@@ -4,8 +4,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Jogoo - Menu</title>
+  <title>Jogoo - Menu (com jogo)</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    /* pequeno ajuste para o iframe do jogo */
+    .game-modal .modal-content { padding:0; background:transparent; width:95%; height:90vh; max-width:1200px; }
+    .game-frame { width:100%; height:100%; border:0; display:block; }
+    .play-btn { background:linear-gradient(90deg,var(--accent),#ff7a55); border:none; padding:10px 14px; border-radius:10px; color:white; cursor:pointer; }
+  </style>
 </head>
 <body class="theme-dark">
   <header class="topbar">
@@ -15,13 +21,14 @@
       <button onclick="openChat()">Chat</button>
       <button onclick="location.href='perfil.html'">Perfil</button>
       <button onclick="location.href='admin.html'">Admin</button>
+      <button class="play-btn" onclick="openGame()">Jogar</button>
     </nav>
   </header>
   <main class="container">
     <section class="hero">
       <h2>Bem-vindo ao protótipo melhorado</h2>
-      <p>Use o menu acima para navegar. O chat abre como modal.</p>
-      <p>Se quiser voltar pro jogo, abra <code>orig_index.html</code> (versão original) ou integre o player ao novo menu.</p>
+      <p>Use o menu acima para navegar. Clique em <strong>Jogar</strong> para abrir o jogo sem sair do menu.</p>
+      <p>Se quiser abrir a versão antiga numa nova aba, <a href="orig_index.html" target="_blank">clique aqui</a>.</p>
     </section>
   </main>
 
@@ -42,11 +49,24 @@
     </div>
   </div>
 
+  <!-- Game modal (iframe) -->
+  <div id="gameModal" class="modal game-modal" aria-hidden="true" style="display:none;">
+    <div class="modal-content">
+      <header class="modal-header" style="background:var(--panel); border-top-left-radius:12px; border-top-right-radius:12px;">
+        <h3>Jogando — Feche para voltar ao menu</h3>
+        <button class="close" onclick="closeGame()">×</button>
+      </header>
+      <iframe id="gameFrame" src="orig_index.html" class="game-frame"></iframe>
+    </div>
+  </div>
+
   <script src="firebase.js"></script>
   <script src="chat.js"></script>
   <script>
   function openChat(){ document.getElementById('chatModal').style.display='flex'; }
   function closeChat(){ document.getElementById('chatModal').style.display='none'; }
+  function openGame(){ document.getElementById('gameModal').style.display='flex'; document.getElementById('gameFrame').contentWindow.focus(); }
+  function closeGame(){ document.getElementById('gameModal').style.display='none'; }
   </script>
 </body>
 </html>

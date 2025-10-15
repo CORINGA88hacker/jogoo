@@ -1,14 +1,23 @@
-// Firebase config and initialization
-const firebaseConfig = {"apiKey": "AIzaSyBHIc2E4XwRO5FXo4uHlTQVRArOis73MjE", "authDomain": "projeto-deus-yato-928-sk-default-rtdb.firebaseapp.com", "databaseURL": "https://projeto-deus-yato-928-sk-default-rtdb.firebaseio.com", "projectId": "projeto-deus-yato-928-sk-default-rtdb", "storageBucket": "projeto-deus-yato-928-sk-default-rtdb.appspot.com", "messagingSenderId": "790408726854", "appId": "1:790408726854:android:e2f0de7b7d5dba96b0fd47"};
 
-function initFirebase() {
-  if (!window.firebase) {
-    console.warn('Firebase JS SDK not loaded. Make sure to include CDN scripts in index.html.');
-    return;
-  }
-  // Initialize only if no apps initialized yet
-  if (!firebase.apps || !firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-  }
-}
-
+// Arquivo de placeholder para integração com Firebase.
+// Substitua as funções abaixo por integrações reais com firebase.auth(), firebase.database() e firebase.storage().
+// (Por segurança não incluí chaves reais)
+const firebaseConfig = {
+  apiKey: "COLOQUE_AQUI",
+  authDomain: "COLOQUE_AQUI",
+  databaseURL: "COLOQUE_AQUI",
+  projectId: "COLOQUE_AQUI",
+  storageBucket: "COLOQUE_AQUI",
+  messagingSenderId: "COLOQUE_AQUI",
+  appId: "COLOQUE_AQUI"
+};
+// --- STUBS simples (substituir por implementação real) ---
+async function firebaseLogin(email, pass){ throw new Error('Implementar firebaseLogin com firebase.auth()'); }
+async function firebaseSignup(email, pass){ throw new Error('Implementar firebaseSignup com firebase.auth()'); }
+async function firebaseUploadProfilePhoto(file){ throw new Error('Implementar upload com firebase.storage()'); }
+async function firebaseSaveProfile(profile){ throw new Error('Implementar salvar perfil no database'); }
+async function firebaseSendChatMessage(msg){ throw new Error('Implementar envio de mensagem no database'); }
+async function firebaseFetchChat(){ throw new Error('Implementar leitura do chat'); }
+async function firebaseFetchChatLive(){ return []; /* implementar escuta em tempo real */ }
+async function firebaseFetchChat(){ return []; }
+async function firebaseDeleteMessage(id){ throw new Error('Implementar deleção de mensagem'); }

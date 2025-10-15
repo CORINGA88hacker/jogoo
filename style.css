@@ -1,23 +1,19 @@
-*{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
-body{margin:0;background:#111;color:#eee;display:flex;align-items:center;justify-content:center;height:100vh}
-#game{width:900px;max-width:95%;background:#0f1724;border-radius:10px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.7)}
-#scene{position:relative;height:450px;background:#222}
-#sceneImg{width:100%;height:100%;object-fit:cover;display:block}
-#charactersLayer{position:absolute;left:0;right:0;top:0;bottom:0;pointer-events:none}
-.char{position:absolute;bottom:10px;width:150px;pointer-events:auto;cursor:pointer;transition:transform .2s}
-.char:hover{transform:translateY(-10px)}
-#ui{padding:12px;background:#071024;display:flex;gap:12px;align-items:flex-start}
-#dialogBox{flex:1}
-#dialogText{min-height:48px;padding:8px;border-radius:6px;background:rgba(255,255,255,0.03)}
-.choiceBtn{display:block;margin-top:8px;padding:8px;border-radius:6px;background:#0b6;cursor:pointer;color:#012}
-.choiceBtn:hover{opacity:.9}
-#controls{width:240px;text-align:right}
-#nextScenario{padding:8px 12px;border-radius:6px;background:#285;cursor:pointer}
-.overlay{position:absolute;inset:0;background:rgba(3,7,18,0.9);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10}
-.overlay input{padding:8px;margin:8px;border-radius:6px;width:220px}
 
-
-/* TTS controls and history */
-.ttsControls { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:8px; }
-.dialogHistory { max-height:140px; overflow:auto; border:1px solid rgba(0,0,0,0.1); padding:6px; background:rgba(255,255,255,0.9); margin-bottom:8px; }
-.histItem { font-size:13px; margin:2px 0; }
+:root{ --bg:#0b0b0d; --panel:#111; --accent:#ff4d2d; --muted:#bbb; --text:#eee; }
+body.theme-dark{ background:var(--bg); color:var(--text); font-family:Inter,Arial,Helvetica,sans-serif; margin:0; }
+.topbar{ display:flex; justify-content:space-between; align-items:center; padding:12px 18px; background:linear-gradient(90deg,#111, #1a1a1a); box-shadow:0 2px 6px rgba(0,0,0,.5); }
+.topbar h1{ margin:0; font-size:20px; }
+nav button{ margin-left:8px; background:transparent; border:1px solid var(--panel); padding:8px 12px; color:var(--text); border-radius:8px; cursor:pointer; }
+.container{ padding:28px; }
+.hero{ background:var(--panel); padding:18px; border-radius:12px; max-width:900px; }
+.modal{ display:none; position:fixed; inset:0; align-items:center; justify-content:center; background:rgba(0,0,0,.6); }
+.modal .modal-content{ width:90%; max-width:700px; background:var(--panel); border-radius:12px; padding:10px; display:flex; flex-direction:column; max-height:80vh; }
+.modal-header{ display:flex; justify-content:space-between; align-items:center; }
+.chat-area{ overflow:auto; padding:10px; flex:1; }
+.chat-message{ padding:6px; border-bottom:1px solid rgba(255,255,255,0.03); display:flex; gap:8px; align-items:center; }
+.mini{ width:36px; height:36px; border-radius:8px; object-fit:cover; }
+.avatar{ width:120px; height:120px; border-radius:12px; object-fit:cover; }
+.container.small{ max-width:420px; margin:40px auto; }
+.row{ display:flex; gap:8px; margin-top:10px; }
+.admin-msg{ padding:8px; border-bottom:1px solid rgba(255,255,255,0.03); display:flex; align-items:center; gap:8px; }
+input, button{ font-size:15px; padding:8px; border-radius:8px; border:1px solid rgba(255,255,255,0.06); background:transparent; color:var(--text); }

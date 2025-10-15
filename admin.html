@@ -12,7 +12,6 @@
   </main>
   <script src="firebase.js"></script>
   <script>
-  // script simples para mostrar mensagens (a moderação real depende do backend)
   async function loadAdmin(){
     const msgs = await firebaseFetchChat();
     const el = document.getElementById('msgs');

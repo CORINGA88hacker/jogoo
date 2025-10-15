@@ -1,5 +1,6 @@
 
-// Lógica mínima de chat que usa funções de firebase.js (stubbed)
+/* Lógica mínima de chat que usa funções de firebase.js (stubs)
+   Substitua os stubs com integrações reais no arquivo firebase.js */
 async function sendMessage(){
   const text = document.getElementById('msgInput').value.trim();
   if(!text) return;
